@@ -8,9 +8,11 @@ import com.mikepenz.iconics.typeface.library.community.material.CommunityMateria
 import pl.szczodrzynski.edziennik.MainActivity
 import pl.szczodrzynski.edziennik.R
 import pl.szczodrzynski.edziennik.data.enums.FeatureType
+import pl.szczodrzynski.edziennik.data.enums.LoginType
 import pl.szczodrzynski.edziennik.data.enums.MetadataType
 import pl.szczodrzynski.edziennik.databinding.BasePagerFragmentBinding
 import pl.szczodrzynski.edziennik.ext.Bundle
+import pl.szczodrzynski.edziennik.ui.attendance.excuse.ExcuseListFragment
 import pl.szczodrzynski.edziennik.ui.base.fragment.PagerFragment
 import pl.szczodrzynski.edziennik.ui.dialogs.settings.AttendanceConfigDialog
 import pl.szczodrzynski.navlib.bottomsheet.items.BottomSheetPrimaryItem
@@ -59,6 +61,10 @@ class AttendanceFragment : PagerFragment<BasePagerFragmentBinding, MainActivity>
         } to getString(R.string.attendance_tab_types),
         AttendanceListFragment().apply {
             arguments = Bundle("viewType" to VIEW_LIST)
-        } to getString(R.string.attendance_tab_list)
+        } to getString(R.string.attendance_tab_list),
+    ) + listOfNotNull(
+        // Fork: e-Usprawiedliwienia z Librus Synergia (tylko konta Librus)
+        (ExcuseListFragment() to getString(R.string.attendance_tab_excuses))
+            .takeIf { app.profile.loginStoreType == LoginType.LIBRUS },
     )
 }
