@@ -2,9 +2,10 @@ package pl.szczodrzynski.edziennik.data.api.edziennik.librus.data.synergia
 
 import org.jsoup.Jsoup
 import pl.szczodrzynski.edziennik.ui.attendance.excuse.Excuse
+import pl.szczodrzynski.edziennik.ui.attendance.excuse.ExcuseFormInfo
 
 /**
- * Parsuje stronę Synergii /eusprawiedliwienia (lista wysłanych e-usprawiedliwień).
+ * Parsuje strony Synergii /eusprawiedliwienia (lista) i /eusprawiedliwienia/dodaj (formularz).
  */
 object LibrusSynergiaExcuseParser {
 
@@ -39,5 +40,21 @@ object LibrusSynergiaExcuseParser {
                 hasAttachment = cells[0].children().isNotEmpty() || cells[0].text().isNotBlank(),
             )
         }
+    }
+
+    /**
+     * Strona /eusprawiedliwienia/dodaj. Zwraca null, jeśli nie ma formularza
+     * (np. szkoła wyłączyła e-usprawiedliwienia albo konto nie jest kontem rodzica).
+     */
+    fun parseFormInfo(html: String): ExcuseFormInfo? {
+        val doc = Jsoup.parse(html)
+        val form = doc.selectFirst("form#formUsprawiedliwienie") ?: return null
+        val requestKey = form.selectFirst("input[name=requestkey]")?.attr("value") ?: return null
+        val tutorName = doc.select(".warning-content p")
+            .firstOrNull { it.text().contains("wychowawcy") }
+            ?.selectFirst("b")?.text()?.trim()?.removeSuffix(".")
+            .orEmpty()
+        val autoAccept = doc.selectFirst("input#autoAkceptacja")?.attr("value") == "1"
+        return ExcuseFormInfo(tutorName = tutorName, requestKey = requestKey, autoAccept = autoAccept)
     }
 }

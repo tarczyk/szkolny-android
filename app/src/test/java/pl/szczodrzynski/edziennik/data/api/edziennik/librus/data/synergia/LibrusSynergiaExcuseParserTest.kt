@@ -81,4 +81,33 @@ class LibrusSynergiaExcuseParserTest {
         ).isEmpty())
         assertTrue(LibrusSynergiaExcuseParser.parseExcuses("<html></html>").isEmpty())
     }
+
+    private fun formPage(autoAccept: String) = """
+        <html><body>jesteś zalogowany
+        <div class="warning-box information medium">
+            <div class="warning-content">
+                <p>Usprawiedliwienie zostanie wysłane do wychowawcy: <b>Nowak Anna.</b></p>
+            </div>
+        </div>
+        <input type="hidden" id="autoAkceptacja" value="$autoAccept">
+        <form method="POST" id="formUsprawiedliwienie" enctype="multipart/form-data">
+            <input type="hidden" name="requestkey" value="key42">
+            <input type="hidden" name="dodajUsprawiedliwienieDo" value="1">
+        </form>
+        </body></html>
+    """.trimIndent()
+
+    @Test
+    fun parsesFormInfo() {
+        val form = LibrusSynergiaExcuseParser.parseFormInfo(formPage("0"))!!
+        assertEquals("Nowak Anna", form.tutorName)
+        assertEquals("key42", form.requestKey)
+        assertFalse(form.autoAccept)
+        assertTrue(LibrusSynergiaExcuseParser.parseFormInfo(formPage("1"))!!.autoAccept)
+    }
+
+    @Test
+    fun returnsNullWithoutForm() {
+        assertNull(LibrusSynergiaExcuseParser.parseFormInfo("<html><body>stop.png</body></html>"))
+    }
 }

@@ -4,6 +4,7 @@
 
 package pl.szczodrzynski.edziennik.data.api.edziennik.librus
 
+import pl.szczodrzynski.edziennik.data.api.edziennik.librus.data.synergia.LibrusSynergiaGetExcuseForm
 import pl.szczodrzynski.edziennik.data.api.edziennik.librus.data.synergia.LibrusSynergiaGetExcuses
 import pl.szczodrzynski.edziennik.ui.attendance.excuse.ExcuseStatusFilter
 import pl.szczodrzynski.edziennik.utils.models.Date
@@ -163,6 +164,14 @@ class Librus(val app: App, val profile: Profile?, val loginStore: LoginStore, va
     fun getExcuses(dateFrom: Date, dateTo: Date, status: ExcuseStatusFilter) {
         login(LoginMethod.LIBRUS_SYNERGIA) {
             LibrusSynergiaGetExcuses(data, dateFrom, dateTo, status) {
+                completed()
+            }
+        }
+    }
+
+    fun getExcuseForm() {
+        login(LoginMethod.LIBRUS_SYNERGIA) {
+            LibrusSynergiaGetExcuseForm(data) {
                 completed()
             }
         }

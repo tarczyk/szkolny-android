@@ -63,7 +63,7 @@ class ExcuseSendDialog(
             setSendEnabled(true)
         } catch (e: Exception) {
             Timber.e(e)
-            b.tutorInfo.text = activity.getString(R.string.excuse_error)
+            b.tutorInfo.text = activity.getString(R.string.excuse_form_error, e.message ?: e.toString())
             b.tutorInfo.isVisible = true
         } finally {
             b.progressBar.isVisible = false
@@ -104,9 +104,13 @@ class ExcuseSendDialog(
         launch {
             val lessons = try {
                 repository.getLessons(dateFrom)
+            } catch (e: ExcuseNotReadyException) {
+                container.addView(TextView(activity).apply { setText(R.string.excuse_lessons_not_ready) })
+                return@launch
             } catch (e: Exception) {
                 Timber.e(e)
-                emptyList()
+                container.addView(TextView(activity).apply { text = e.message ?: e.toString() })
+                return@launch
             }
             if (lessons.isEmpty()) {
                 container.addView(TextView(activity).apply { setText(R.string.excuse_no_lessons) })
@@ -183,7 +187,7 @@ class ExcuseSendDialog(
             Toast.makeText(activity, R.string.excuse_sent, Toast.LENGTH_SHORT).show()
             onSent()
             DISMISS
-        } catch (e: ExcuseSendNotReadyException) {
+        } catch (e: ExcuseNotReadyException) {
             showError(R.string.excuse_send_not_ready)
             setSendEnabled(true)
             NO_DISMISS

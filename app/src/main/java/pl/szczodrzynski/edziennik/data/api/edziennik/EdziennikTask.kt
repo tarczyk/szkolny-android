@@ -54,6 +54,7 @@ open class EdziennikTask(override val profileId: Int, val request: Any) : IApiTa
         fun attachmentGet(profileId: Int, owner: Any, attachmentId: Long, attachmentName: String) = EdziennikTask(profileId, AttachmentGetRequest(owner, attachmentId, attachmentName))
         fun recipientListGet(profileId: Int) = EdziennikTask(profileId, RecipientListGetRequest())
         fun eventGet(profileId: Int, event: EventFull) = EdziennikTask(profileId, EventGetRequest(event))
+        fun excuseFormGet(profileId: Int) = EdziennikTask(profileId, ExcuseFormGetRequest())
         fun excuseListGet(profileId: Int, dateFrom: Date, dateTo: Date, status: ExcuseStatusFilter) = EdziennikTask(profileId, ExcuseListGetRequest(dateFrom, dateTo, status))
     }
 
@@ -149,6 +150,9 @@ open class EdziennikTask(override val profileId: Int, val request: Any) : IApiTa
             is AttachmentGetRequest -> edziennikInterface?.getAttachment(request.owner, request.attachmentId, request.attachmentName)
             is RecipientListGetRequest -> edziennikInterface?.getRecipientList()
             is EventGetRequest -> edziennikInterface?.getEvent(request.event)
+            is ExcuseFormGetRequest -> (edziennikInterface as? Librus)
+                ?.getExcuseForm()
+                ?: taskCallback.onCompleted()
             is ExcuseListGetRequest -> (edziennikInterface as? Librus)
                 ?.getExcuses(request.dateFrom, request.dateTo, request.status)
                 ?: taskCallback.onCompleted()
@@ -175,5 +179,6 @@ open class EdziennikTask(override val profileId: Int, val request: Any) : IApiTa
     data class AttachmentGetRequest(val owner: Any, val attachmentId: Long, val attachmentName: String)
     class RecipientListGetRequest
     data class EventGetRequest(val event: EventFull)
+    class ExcuseFormGetRequest
     data class ExcuseListGetRequest(val dateFrom: Date, val dateTo: Date, val status: ExcuseStatusFilter)
 }
