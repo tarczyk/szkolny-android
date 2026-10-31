@@ -22,7 +22,7 @@ import timber.log.Timber
  */
 class ExcuseSendDialog(
     activity: AppCompatActivity,
-    private val repository: ExcuseRepository = ExcuseRepository.instance,
+    private val repository: ExcuseRepository,
     private val onSent: () -> Unit = {},
 ) : BindingDialog<AttendanceExcuseSendDialogBinding>(activity) {
 
@@ -183,6 +183,10 @@ class ExcuseSendDialog(
             Toast.makeText(activity, R.string.excuse_sent, Toast.LENGTH_SHORT).show()
             onSent()
             DISMISS
+        } catch (e: ExcuseSendNotReadyException) {
+            showError(R.string.excuse_send_not_ready)
+            setSendEnabled(true)
+            NO_DISMISS
         } catch (e: Exception) {
             Timber.e(e)
             showError(R.string.excuse_error)

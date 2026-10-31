@@ -6,7 +6,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.launch
+import pl.szczodrzynski.edziennik.App
 import pl.szczodrzynski.edziennik.MainActivity
+import pl.szczodrzynski.edziennik.R
 import pl.szczodrzynski.edziennik.databinding.AttendanceExcuseFragmentBinding
 import pl.szczodrzynski.edziennik.ui.base.fragment.BaseFragment
 import pl.szczodrzynski.edziennik.utils.models.Date
@@ -19,7 +21,7 @@ class ExcuseListFragment : BaseFragment<AttendanceExcuseFragmentBinding, MainAct
     inflater = AttendanceExcuseFragmentBinding::inflate,
 ) {
 
-    private val repository = ExcuseRepository.instance
+    private val repository by lazy { ExcuseRepository.get(activity, App.profileId) }
     private val adapter = ExcuseAdapter()
 
     // Domyślnie bieżący miesiąc, jak w Synergii
@@ -59,18 +61,18 @@ class ExcuseListFragment : BaseFragment<AttendanceExcuseFragmentBinding, MainAct
         b.noData.isVisible = false
         b.list.isVisible = false
         launch {
-            val items = try {
-                repository.getExcuses(dateFrom, dateTo, status)
-            } catch (e: Exception) {
-                Timber.e(e)
-                emptyList()
-            }
+            val result = runCatching { repository.getExcuses(dateFrom, dateTo, status) }
             if (!isAdded) return@launch
+            val items = result.getOrElse { emptyList() }
             adapter.items = items
             adapter.notifyDataSetChanged()
             b.progressBar.isVisible = false
             b.list.isVisible = items.isNotEmpty()
             b.noData.isVisible = items.isEmpty()
+            result.exceptionOrNull()?.let { e ->
+                Timber.e(e)
+                b.noData.text = getString(R.string.excuse_load_error, e.message ?: e.toString())
+            } ?: b.noData.setText(R.string.excuse_no_data)
         }
     }
 

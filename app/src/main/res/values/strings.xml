@@ -1597,5 +1597,7 @@
     <string name="excuse_confirm_text">Czy na pewno wysłać usprawiedliwienie?</string>
     <string name="excuse_sent">Usprawiedliwienie zostało wysłane</string>
     <string name="excuse_error">Nie udało się wysłać usprawiedliwienia</string>
+    <string name="excuse_load_error">Nie udało się pobrać usprawiedliwień z Synergii.\n%1$s</string>
+    <string name="excuse_send_not_ready">Wysyłanie nie jest jeszcze podłączone. Nic nie zostało wysłane do dziennika.</string>
     <string name="excuse_list_details">Nauczyciele: %1$s\nWysłano: %2$s • Nieobecności: %3$d</string>
 </resources>

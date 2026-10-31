@@ -1,13 +1,15 @@
 package pl.szczodrzynski.edziennik.ui.attendance.excuse
 
+import android.content.Context
 import kotlinx.coroutines.delay
 import pl.szczodrzynski.edziennik.utils.models.Date
 
 /**
  * Źródło danych e-Usprawiedliwień.
  *
- * Teraz: [FakeExcuseRepository] (dane przykładowe, nic nie wysyła).
- * Później: implementacja na LibrusSynergia.synergiaGet(...):
+ * [LibrusExcuseRepository]: lista z Synergii (gotowe), formularz i wysyłka (do zrobienia).
+ * [FakeExcuseRepository]: dane przykładowe, nic nie wysyła.
+ * Endpointy Synergii:
  *  - getExcuses     -> POST /eusprawiedliwienia (requestkey, usprawiedliwienia_filtr=1, data_od,
  *                      data_do, status) + parsowanie <table class="decorated stretch center">:
  *                      7 kolumn: Załącznik | Okres (<b>) | Liczba | Treść | Nauczyciele | Data | Status,
@@ -23,8 +25,12 @@ interface ExcuseRepository {
     suspend fun send(form: ExcuseFormInfo, request: ExcuseRequest)
 
     companion object {
-        // Jedno miejsce do podmiany na prawdziwą implementację.
-        val instance: ExcuseRepository = FakeExcuseRepository()
+        /** Ustaw na true, żeby testować UI bez logowania do Synergii. */
+        var useFake = false
+
+        fun get(context: Context, profileId: Int): ExcuseRepository =
+            if (useFake) FakeExcuseRepository()
+            else LibrusExcuseRepository(context.applicationContext, profileId)
     }
 }
 
