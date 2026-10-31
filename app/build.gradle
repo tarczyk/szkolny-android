@@ -237,7 +237,7 @@ dependencies {
     implementation "cat.ereza:customactivityoncrash:2.3.0"
     implementation "com.android.volley:volley:1.2.1"
     implementation "com.daimajia.swipelayout:library:1.2.0@aar"
-    implementation "com.github.Applandeo:Material-Calendar-View:15de569cbc" // https://github.com/Applandeo/Material-Calendar-View
+    implementation project(":vendor:material-calendar-view") // Applandeo/Material-Calendar-View@15de569cbc, see vendor/README.md
     implementation "com.github.CanHub:Android-Image-Cropper:2.2.2" // https://github.com/CanHub/Android-Image-Cropper
     implementation "com.github.ChuckerTeam.Chucker:library:3.5.2" // https://github.com/ChuckerTeam/chucker
     implementation "com.github.antonKozyriatskyi:CircularProgressIndicator:1.2.2" // https://github.com/antonKozyriatskyi/CircularProgressIndicator
@@ -245,7 +245,7 @@ dependencies {
     implementation "com.github.smuyyh:JsonViewer:V1.0.6" // https://github.com/smuyyh/JsonViewer
     implementation "com.github.underwindfall.PowerPermission:powerpermission-coroutines:1.4.0" // https://github.com/underwindfall/PowerPermission
     implementation "com.github.underwindfall.PowerPermission:powerpermission:1.4.0" // https://github.com/underwindfall/PowerPermission
-    implementation "com.github.wulkanowy.uonet-request-signer:hebe-jvm:a99ca50a31" // https://github.com/wulkanowy/uonet-request-signer
+    implementation project(":vendor:hebe-jvm") // wulkanowy/uonet-request-signer@a99ca50a31, see vendor/README.md
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation "com.jaredrummler:colorpicker:1.1.0"
     implementation "io.coil-kt:coil:1.1.1"

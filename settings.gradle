@@ -1,2 +1,5 @@
 rootProject.name='Szkolny.eu'
 include ':app', ':navlib', ':navlib-font'
+
+// Fork: libraries no longer available on JitPack, built from source (see vendor/README.md)
+include ':vendor:hebe-jvm', ':vendor:material-calendar-view'
