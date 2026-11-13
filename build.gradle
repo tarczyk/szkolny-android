@@ -6,7 +6,7 @@ buildscript {
 
         release = [
                 versionName: "4.14",
-                versionCode: 4140099
+                versionCode: 4140100
         ]
 
         setup = [
