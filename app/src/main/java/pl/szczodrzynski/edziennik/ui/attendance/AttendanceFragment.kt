@@ -108,9 +108,10 @@ class AttendanceFragment : Fragment(), CoroutineScope {
                             arguments = Bundle("viewType" to VIEW_LIST)
                         } to getString(R.string.attendance_tab_list)
                 ) + listOfNotNull(
-                        // Fork: e-Usprawiedliwienia z Librus Synergia (tylko konta Librus)
+                        // Fork: e-Usprawiedliwienia z Librus Synergia (tylko konta rodzica Librus;
+                        // konto ucznia dostaje w Synergii "stop.png" -> ERROR_LIBRUS_SYNERGIA_ACCESS_DENIED)
                         (ExcuseListFragment() to getString(R.string.attendance_tab_excuses))
-                                .takeIf { app.profile.loginStoreType == LoginType.LIBRUS }
+                                .takeIf { app.profile.loginStoreType == LoginType.LIBRUS && app.profile.isParent }
                 )
         )
         b.viewPager.apply {

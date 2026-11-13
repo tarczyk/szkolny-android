@@ -13,7 +13,7 @@
 
         <!-- "Informacja": do kogo pójdzie usprawiedliwienie -->
         <com.google.android.material.card.MaterialCardView
-            style="?materialCardViewFilledStyle"
+            style="@style/Widget.MaterialComponents.CardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
-                android:textAppearance="?textAppearanceBodyMedium"
+                android:textAppearance="@style/NavView.TextView.Medium"
                 tools:text="Usprawiedliwienie zostanie wysłane do wychowawcy: Kowalska Anna." />
         </com.google.android.material.card.MaterialCardView>
 
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="@string/excuse_mode"
-                android:textAppearance="?textAppearanceLabelLarge" />
+                android:textAppearance="@style/NavView.TextView.Small" />
 
             <RadioGroup
                 android:id="@+id/modeGroup"
@@ -149,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/excuse_attachment_hint"
-                android:textAppearance="?textAppearanceBodySmall" />
+                android:textAppearance="@style/NavView.TextView.Helper" />
 
             <!-- Powiadom nauczycieli o planowanej nieobecności -->
             <CheckBox
@@ -164,7 +164,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:textAppearance="?textAppearanceBodySmall"
+                android:textAppearance="@style/NavView.TextView.Helper"
                 tools:text="@string/excuse_notify_teachers_hint_future" />
         </LinearLayout>
     </LinearLayout>

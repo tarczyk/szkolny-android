@@ -103,7 +103,7 @@
             android:gravity="center"
             android:padding="16dp"
             android:text="@string/excuse_no_data"
-            android:textAppearance="?textAppearanceBodyLarge"
+            android:textAppearance="@style/NavView.TextView.Medium"
             android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
