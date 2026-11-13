@@ -50,6 +50,7 @@ android {
             ]
         }
         release {
+            applicationIdSuffix = ".m" // fork: side-by-side install with the official app (m = master)
             minifyEnabled = true
             shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
