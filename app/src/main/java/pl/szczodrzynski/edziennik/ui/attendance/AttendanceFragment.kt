@@ -18,10 +18,12 @@ import kotlinx.coroutines.Job
 import pl.szczodrzynski.edziennik.App
 import pl.szczodrzynski.edziennik.MainActivity
 import pl.szczodrzynski.edziennik.R
+import pl.szczodrzynski.edziennik.data.db.enums.LoginType
 import pl.szczodrzynski.edziennik.data.db.enums.MetadataType
 import pl.szczodrzynski.edziennik.databinding.AttendanceFragmentBinding
 import pl.szczodrzynski.edziennik.ext.Bundle
 import pl.szczodrzynski.edziennik.ext.addOnPageSelectedListener
+import pl.szczodrzynski.edziennik.ui.attendance.excuse.ExcuseListFragment
 import pl.szczodrzynski.edziennik.ui.base.lazypager.FragmentLazyPagerAdapter
 import pl.szczodrzynski.edziennik.ui.dialogs.settings.AttendanceConfigDialog
 import pl.szczodrzynski.navlib.bottomsheet.items.BottomSheetPrimaryItem
@@ -105,6 +107,10 @@ class AttendanceFragment : Fragment(), CoroutineScope {
                         AttendanceListFragment().apply {
                             arguments = Bundle("viewType" to VIEW_LIST)
                         } to getString(R.string.attendance_tab_list)
+                ) + listOfNotNull(
+                        // Fork: e-Usprawiedliwienia z Librus Synergia (tylko konta Librus)
+                        (ExcuseListFragment() to getString(R.string.attendance_tab_excuses))
+                                .takeIf { app.profile.loginStoreType == LoginType.LIBRUS }
                 )
         )
         b.viewPager.apply {

@@ -223,7 +223,7 @@ dependencies {
     implementation "com.github.smuyyh:JsonViewer:V1.0.6" // https://github.com/smuyyh/JsonViewer
     implementation "com.github.underwindfall.PowerPermission:powerpermission-coroutines:1.4.0" // https://github.com/underwindfall/PowerPermission
     implementation "com.github.underwindfall.PowerPermission:powerpermission:1.4.0" // https://github.com/underwindfall/PowerPermission
-    implementation "com.github.wulkanowy.uonet-request-signer:hebe-jvm:a99ca50a31" // https://github.com/wulkanowy/uonet-request-signer
+    implementation project(":vendor:hebe-jvm") // wulkanowy/uonet-request-signer@a99ca50a31, see vendor/README.md
     implementation "com.jaredrummler:colorpicker:1.1.0"
     implementation "io.coil-kt:coil:1.1.1"
     implementation "me.dm7.barcodescanner:zxing:1.9.8"
@@ -232,6 +232,9 @@ dependencies {
     implementation "org.greenrobot:eventbus:3.2.0"
     implementation("com.heinrichreimersoftware:material-intro") { version { strictly "1.5.8" } }
     implementation("pl.droidsonroids.gif:android-gif-drawable") { version { strictly "1.2.15" } }
+
+    // Unit tests
+    testImplementation "junit:junit:4.13.2"
 
     // Debug-only dependencies
     debugImplementation "com.github.amitshekhariitbhu.Android-Debug-Database:debug-db:v1.0.6"

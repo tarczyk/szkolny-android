@@ -4,6 +4,12 @@
 
 package pl.szczodrzynski.edziennik.data.api.edziennik.librus
 
+import pl.szczodrzynski.edziennik.data.api.edziennik.librus.data.synergia.LibrusSynergiaGetExcuseForm
+import pl.szczodrzynski.edziennik.data.api.edziennik.librus.data.synergia.LibrusSynergiaGetExcuses
+import pl.szczodrzynski.edziennik.data.api.edziennik.librus.data.synergia.LibrusSynergiaSendExcuse
+import pl.szczodrzynski.edziennik.ui.attendance.excuse.ExcuseRequest
+import pl.szczodrzynski.edziennik.ui.attendance.excuse.ExcuseStatusFilter
+import pl.szczodrzynski.edziennik.utils.models.Date
 import com.google.gson.JsonObject
 import pl.szczodrzynski.edziennik.App
 import pl.szczodrzynski.edziennik.data.api.*
@@ -154,6 +160,31 @@ class Librus(val app: App, val profile: Profile?, val loginStore: LoginStore, va
     override fun getEvent(eventFull: EventFull) {
         login(LoginMethod.LIBRUS_SYNERGIA) {
             LibrusSynergiaGetHomework(data, eventFull) {
+                completed()
+            }
+        }
+    }
+
+    // Fork: e-Usprawiedliwienia (Synergia only, not part of EdziennikInterface)
+    fun getExcuses(dateFrom: Date, dateTo: Date, status: ExcuseStatusFilter) {
+        login(LoginMethod.LIBRUS_SYNERGIA) {
+            LibrusSynergiaGetExcuses(data, dateFrom, dateTo, status) {
+                completed()
+            }
+        }
+    }
+
+    fun getExcuseForm() {
+        login(LoginMethod.LIBRUS_SYNERGIA) {
+            LibrusSynergiaGetExcuseForm(data) {
+                completed()
+            }
+        }
+    }
+
+    fun sendExcuse(request: ExcuseRequest) {
+        login(LoginMethod.LIBRUS_SYNERGIA) {
+            LibrusSynergiaSendExcuse(data, request) {
                 completed()
             }
         }

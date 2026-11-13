@@ -1,2 +1,5 @@
 rootProject.name='Szkolny.eu'
 include ':app'
+
+// Fork: library no longer available on JitPack, built from source (see vendor/README.md)
+include ':vendor:hebe-jvm'
