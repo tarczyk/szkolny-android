@@ -20,8 +20,17 @@
   (build-tools 36.1.0; `apksigner` needs `JAVA_HOME` set).
 - **Install:** `adb install -r <signed>` (keeps data and logged-in accounts).
   Platform tools: `~/Library/Android/sdk/platform-tools/adb`.
-- The release build also validates git remotes and author at first launch; if a
-  further validation message appears, check `BuildManager.kt`.
+- **HEAD must be pushed to the public fork before installing.** At first launch the
+  app calls `https://api.github.com/repos/<remote>/git/commits/<hash>` anonymously
+  (`BuildManager.validateRepo`); a 404 shows "kompilacja zawiera nieopublikowane
+  zmiany ... repozytorium prywatne lub nie zawiera najnowszych zmian" and blocks the app.
+  Remote used: `tarczyk/szkolny-android` (fork must stay PUBLIC).
+  Push first: `git push fork feature/e-usprawiedliwienia-master`.
+- **A failed validation is cached per remote+hash** (`invalid<remote><hash>` md5 in
+  app config), so pushing afterwards does not help the already installed build.
+  Rebuild from a new commit (new hash) or clear the app data. Therefore the order is:
+  commit everything → push → build → align → sign → `adb install -r`.
+  Any later commit (even docs) changes the hash, so push it and rebuild before installing.
 
 ## e-Usprawiedliwienia (Librus Synergia)
 
