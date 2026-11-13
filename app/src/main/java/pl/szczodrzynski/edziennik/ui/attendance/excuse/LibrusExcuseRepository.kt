@@ -11,6 +11,7 @@ import pl.szczodrzynski.edziennik.data.api.edziennik.EdziennikTask
 import pl.szczodrzynski.edziennik.data.api.events.ApiTaskErrorEvent
 import pl.szczodrzynski.edziennik.data.api.events.ExcuseFormGetEvent
 import pl.szczodrzynski.edziennik.data.api.events.ExcuseListGetEvent
+import pl.szczodrzynski.edziennik.data.api.events.ExcuseSentEvent
 import pl.szczodrzynski.edziennik.data.api.models.ApiError
 import pl.szczodrzynski.edziennik.utils.models.Date
 import kotlin.coroutines.resume
@@ -24,8 +25,8 @@ class ExcuseNotReadyException : UnsupportedOperationException()
 private const val TIMEOUT_MS = 45_000L
 
 /**
- * Prawdziwy odczyt listy i danych formularza z Synergii.
- * [getLessons] (tryb "kilka godzin") i [send] nie są jeszcze podłączone
+ * Lista, dane formularza i wysyłka w trybie "wybrane dni" z Synergii.
+ * [getLessons] i wysyłka w trybie "kilka godzin" nie są jeszcze podłączone
  * i celowo rzucają [ExcuseNotReadyException], żeby nic nie udawało działania.
  */
 class LibrusExcuseRepository(
@@ -48,7 +49,11 @@ class LibrusExcuseRepository(
      * ApiTaskFinishedEvent nie mówi, które zadanie się skończyło (np. trwająca
      * synchronizacja), więc czekamy tylko na wynik, błąd krytyczny albo timeout.
      */
-    private suspend fun <T : Any> await(task: EdziennikTask, extract: (Any) -> T?): T = try {
+    private suspend fun <T : Any> await(
+        task: EdziennikTask,
+        timeoutMessage: String = "Synergia nie odpowiedziała w ciągu ${TIMEOUT_MS / 1000} s",
+        extract: (Any) -> T?,
+    ): T = try {
         withTimeout(TIMEOUT_MS) {
             suspendCancellableCoroutine { cont ->
                 val subscriber = object {
@@ -69,6 +74,9 @@ class LibrusExcuseRepository(
                     fun onExcuseFormGetEvent(event: ExcuseFormGetEvent) = onResult(event)
 
                     @Subscribe(threadMode = ThreadMode.MAIN)
+                    fun onExcuseSentEvent(event: ExcuseSentEvent) = onResult(event)
+
+                    @Subscribe(threadMode = ThreadMode.MAIN)
                     fun onApiTaskErrorEvent(event: ApiTaskErrorEvent) {
                         val error = event.error
                         if (error.profileId != profileId || !error.isCritical) return
@@ -83,12 +91,23 @@ class LibrusExcuseRepository(
             }
         }
     } catch (e: TimeoutCancellationException) {
-        throw ExcuseApiException(null, "Synergia nie odpowiedziała w ciągu ${TIMEOUT_MS / 1000} s")
+        throw ExcuseApiException(null, timeoutMessage)
     }
 
     override suspend fun getLessons(date: Date): List<ExcuseLesson> = throw ExcuseNotReadyException()
 
+    /**
+     * Tylko tryb "wybrane dni" (zweryfikowany). Pola lekcji trybu "kilka godzin" nie są znane.
+     * requestkey z [form] nie jest używany: zadanie pobiera świeży tuż przed POST.
+     */
     override suspend fun send(form: ExcuseFormInfo, request: ExcuseRequest) {
-        throw ExcuseNotReadyException()
+        if (request.mode != ExcuseMode.DAYS) throw ExcuseNotReadyException()
+        await(
+            EdziennikTask.excuseSend(profileId, request),
+            // Po timeoucie POST mógł już dojść do Synergii, więc ponowienie może zdublować wysyłkę.
+            timeoutMessage = "Brak odpowiedzi z Synergii. Usprawiedliwienie mogło zostać wysłane, sprawdź listę przed ponowieniem.",
+        ) { event ->
+            (event as? ExcuseSentEvent)?.takeIf { it.profileId == profileId }
+        }
     }
 }

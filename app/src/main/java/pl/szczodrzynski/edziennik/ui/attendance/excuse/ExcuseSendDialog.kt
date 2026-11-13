@@ -193,7 +193,11 @@ class ExcuseSendDialog(
             NO_DISMISS
         } catch (e: Exception) {
             Timber.e(e)
-            showError(R.string.excuse_error)
+            val reason = (e as? ExcuseApiException)?.message
+            showError(
+                if (reason.isNullOrBlank()) activity.getString(R.string.excuse_error)
+                else activity.getString(R.string.excuse_error) + "\n\n" + reason
+            )
             setSendEnabled(true)
             NO_DISMISS
         } finally {
@@ -211,7 +215,9 @@ class ExcuseSendDialog(
         return dialog.getButton() == AlertDialog.BUTTON_POSITIVE
     }
 
-    private fun showError(message: Int) {
+    private fun showError(message: Int) = showError(activity.getString(message))
+
+    private fun showError(message: String) {
         launch {
             SimpleDialog<Unit>(activity) {
                 title(R.string.error_occured)

@@ -57,4 +57,13 @@ object LibrusSynergiaExcuseParser {
         val autoAccept = doc.selectFirst("input#autoAkceptacja")?.attr("value") == "1"
         return ExcuseFormInfo(tutorName = tutorName, requestKey = requestKey, autoAccept = autoAccept)
     }
+
+    /**
+     * Strona po POST /eusprawiedliwienia/dodaj. Synergia odpowiada 302 -> /eusprawiedliwienia,
+     * a lista ma wtedy zielony komunikat "Usprawiedliwienie zostało wysłane."
+     * (zweryfikowane na prawdziwej wysyłce 2026-11-13). Format błędu nie jest znany.
+     */
+    fun isExcuseSent(html: String): Boolean =
+        Jsoup.parse(html).select("div.container.green p")
+            .any { it.text().contains("zostało wysłane") }
 }

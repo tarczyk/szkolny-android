@@ -110,4 +110,21 @@ class LibrusSynergiaExcuseParserTest {
     fun returnsNullWithoutForm() {
         assertNull(LibrusSynergiaExcuseParser.parseFormInfo("<html><body>stop.png</body></html>"))
     }
+
+    // Struktura z prawdziwej strony po wysyłce (302 -> /eusprawiedliwienia).
+    @Test
+    fun detectsSentExcuse() {
+        val html = """
+            <html><body>jesteś zalogowany jako: <b>Jan Testowy (rodzic)</b>
+            <div class="container-background">
+                <div class="container green"><div class="container-background">
+                    <p>Usprawiedliwienie zostało wysłane.</p>
+                </div></div>
+                <form method="POST"><input type="hidden" name="requestkey" value="x"></form>
+            </div>
+            </body></html>
+        """.trimIndent()
+        assertTrue(LibrusSynergiaExcuseParser.isExcuseSent(html))
+        assertFalse(LibrusSynergiaExcuseParser.isExcuseSent(page("")))
+    }
 }

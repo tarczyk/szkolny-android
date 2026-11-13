@@ -4,6 +4,7 @@
 
 package pl.szczodrzynski.edziennik.data.api.edziennik
 
+import pl.szczodrzynski.edziennik.ui.attendance.excuse.ExcuseRequest
 import pl.szczodrzynski.edziennik.ui.attendance.excuse.ExcuseStatusFilter
 import pl.szczodrzynski.edziennik.utils.models.Date
 import com.google.gson.JsonObject
@@ -56,6 +57,7 @@ open class EdziennikTask(override val profileId: Int, val request: Any) : IApiTa
         fun eventGet(profileId: Int, event: EventFull) = EdziennikTask(profileId, EventGetRequest(event))
         fun excuseFormGet(profileId: Int) = EdziennikTask(profileId, ExcuseFormGetRequest())
         fun excuseListGet(profileId: Int, dateFrom: Date, dateTo: Date, status: ExcuseStatusFilter) = EdziennikTask(profileId, ExcuseListGetRequest(dateFrom, dateTo, status))
+        fun excuseSend(profileId: Int, excuse: ExcuseRequest) = EdziennikTask(profileId, ExcuseSendRequest(excuse))
     }
 
     private lateinit var loginStore: LoginStore
@@ -156,6 +158,9 @@ open class EdziennikTask(override val profileId: Int, val request: Any) : IApiTa
             is ExcuseListGetRequest -> (edziennikInterface as? Librus)
                 ?.getExcuses(request.dateFrom, request.dateTo, request.status)
                 ?: taskCallback.onCompleted()
+            is ExcuseSendRequest -> (edziennikInterface as? Librus)
+                ?.sendExcuse(request.excuse)
+                ?: taskCallback.onCompleted()
         }
     }
 
@@ -181,4 +186,5 @@ open class EdziennikTask(override val profileId: Int, val request: Any) : IApiTa
     data class EventGetRequest(val event: EventFull)
     class ExcuseFormGetRequest
     data class ExcuseListGetRequest(val dateFrom: Date, val dateTo: Date, val status: ExcuseStatusFilter)
+    data class ExcuseSendRequest(val excuse: ExcuseRequest)
 }
